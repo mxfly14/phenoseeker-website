@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "phenoseeker-website"
+version = "0.1.0"
+description = "A web app to find closest molecules by phenotypic distance"
+authors = ["Maxime Sanchez <maxime.sanchez14@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+flask = "^3.1.0"
+pandas = "^2.2.3"
+numpy = "^2.2.1"
+pyarrow = "^18.1.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+black = "^24.10.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

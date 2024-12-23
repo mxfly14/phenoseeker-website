@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phenoseeker</title>
+</head>
+<body>
+    <h1>Phenoseeker</h1>
+    <form id="search-form">
+        <label for="positive_control_id">Positive Control ID:</label>
+        <input type="text" id="positive_control_id" name="positive_control_id" required>
+        <br><br>
+        <label for="n">Number of Closest Molecules:</label>
+        <input type="number" id="n" name="n" min="1" value="5" required>
+        <br><br>
+        <button type="submit">Find Closest</button>
+    </form>
+    <div id="results"></div>
+
+    <script>
+        const form = document.getElementById('search-form');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const positiveControlId = document.getElementById('positive_control_id').value;
+            const n = document.getElementById('n').value;
+
+            const response = await fetch('/find_closest', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ positive_control_id: positiveControlId, n: n }),
+            });
+
+            const resultsDiv = document.getElementById('results');
+            if (response.ok) {
+                const data = await response.json();
+                resultsDiv.innerHTML = '<h2>Results:</h2>' + JSON.stringify(data, null, 2);
+            } else {
+                const errorText = await response.text();
+                resultsDiv.innerHTML = '<h2>Error:</h2>' + errorText;
+            }
+        });
+    </script>
+</body>
+</html>
