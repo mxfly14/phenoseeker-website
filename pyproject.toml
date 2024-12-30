@@ -12,6 +12,7 @@ pandas = "^2.2.3"
 numpy = "^2.2.1"
 pyarrow = "^18.1.0"
 ipykernel = "^6.29.5"
+rdkit = "^2024.9.1"
 
 
 [tool.poetry.group.dev.dependencies]
