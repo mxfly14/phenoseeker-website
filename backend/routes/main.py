@@ -86,7 +86,7 @@ def find_closest():
 
         # Parse request data
         query = data.get("query")
-        query_type = data.get("query_type", "id").lower()  # Default to "id"
+        query_type = data.get("query_type", "JCP2022_033924").lower()  # Default to "id"
         n = int(data.get("n", 5))  # Default to 5 closest molecules
 
         # Validate inputs

@@ -39,7 +39,7 @@
     </style>
 </head>
 <body>
-    <h1>PhenoSeeker</h1>
+    <h1>Phenoseeker</h1>
     <form id="search-form">
         <label for="query_type">Search by:</label>
         <select id="query_type">
@@ -63,95 +63,100 @@
     <div id="results"></div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const form = document.getElementById("search-form");
-            const resultsDiv = document.getElementById("results");
-            const dmsoDiv = document.getElementById("dmso-distance");
-            const downloadBtn = document.getElementById("download-btn");
+        const form = document.getElementById("search-form");
+        const resultsDiv = document.getElementById("results");
+        const dmsoDiv = document.getElementById("dmso-distance");
+        const downloadBtn = document.getElementById("download-btn");
 
-            let currentResults = [];
+        let currentResults = [];
 
-            form.addEventListener("submit", async (e) => {
-                e.preventDefault();
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
 
-                const query = document.getElementById("query").value.trim();
-                const queryType = document.getElementById("query_type").value;
-                const n = parseInt(document.getElementById("n").value);
+            const query = document.getElementById("query").value.trim();
+            const queryType = document.getElementById("query_type").value;
+            const n = parseInt(document.getElementById("n").value);
 
-                // Input validation
-                if (!query) {
-                    resultsDiv.innerHTML = "<p class='error'>Query cannot be empty.</p>";
-                    return;
-                }
-                if (n <= 0) {
-                    resultsDiv.innerHTML = "<p class='error'>Number of molecules must be greater than 0.</p>";
-                    return;
-                }
-
-                try {
-                    // Send POST request to backend
-                    const response = await fetch("/find_closest", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ query: query, query_type: queryType, n: n }),
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        currentResults = data.results;
-
-                        // Display results and DMSO distance
-                        displayResults(data.results);
-                        dmsoDiv.innerHTML = `<h3>Distance to DMSO: ${data.dmso_distance.toFixed(6)}</h3>`;
-                    } else {
-                        const errorText = await response.text();
-                        resultsDiv.innerHTML = `<p class='error'>Error: ${errorText}</p>`;
-                        downloadBtn.style.display = "none";
-                    }
-                } catch (error) {
-                    resultsDiv.innerHTML = `<p class='error'>Error fetching data: ${error.message}</p>`;
-                    downloadBtn.style.display = "none";
-                }
-            });
-
-            function displayResults(data) {
-                if (data.length === 0) {
-                    resultsDiv.innerHTML = "<p>No results found.</p>";
-                    downloadBtn.style.display = "none";
-                    return;
-                }
-
-                let table = "<table>";
-                table += "<tr><th>ID</th><th>InChI</th><th>Distance</th></tr>";
-                data.forEach((row) => {
-                    table += `<tr>
-                        <td>${row.Metadata_JCP2022}</td>
-                        <td>${row.Metadata_InChI}</td>
-                        <td>${row.distance.toFixed(6)}</td>
-                    </tr>`;
-                });
-                table += "</table>";
-
-                resultsDiv.innerHTML = table;
-                downloadBtn.style.display = "inline-block";
+            // Input validation
+            if (!query) {
+                resultsDiv.innerHTML = "<p class='error'>Query cannot be empty.</p>";
+                return;
+            }
+            if (n <= 0) {
+                resultsDiv.innerHTML = "<p class='error'>Number of molecules must be greater than 0.</p>";
+                return;
             }
 
-            // Add functionality to download the results as CSV
-            downloadBtn.addEventListener("click", () => {
-                const csvRows = ["ID,InChI,Distance"];
-                currentResults.forEach((row) => {
-                    csvRows.push(
-                        `${row.Metadata_JCP2022},"${row.Metadata_InChI}",${row.distance.toFixed(6)}`
-                    );
+            try {
+                // Send POST request to backend
+                const response = await fetch("/find_closest", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ query: query, query_type: queryType, n: n }),
                 });
 
-                const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.setAttribute("href", url);
-                a.setAttribute("download", "closest_molecules.csv");
-                a.click();
+                if (response.ok) {
+                    const data = await response.json();
+                    currentResults = data.results;
+
+                    // Display results and DMSO distance
+                    displayResults(data.results);
+                    dmsoDiv.innerHTML = `<h3>Distance to DMSO: ${data.dmso_distance.toFixed(6)}</h3>`;
+                } else {
+                    const errorText = await response.text();
+                    resultsDiv.innerHTML = `<p class='error'>Error: ${errorText}</p>`;
+                    downloadBtn.style.display = "none";
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p class='error'>Error fetching data: ${error.message}</p>`;
+                downloadBtn.style.display = "none";
+            }
+        });
+
+        function displayResults(data) {
+            if (data.length === 0) {
+                resultsDiv.innerHTML = "<p>No results found.</p>";
+                downloadBtn.style.display = "none";
+                return;
+            }
+        
+            // Limit the displayed results to the top 10
+            const topResults = data.slice(0, 10);
+        
+            let table = "<table>";
+            table += "<tr><th>ID</th><th>Structure</th><th>Distance</th></tr>";
+            topResults.forEach((row) => {
+                const inchi = encodeURIComponent(row.Metadata_InChI);
+                const imgSrc = `/molecule_image?inchi=${inchi}`;
+            
+                table += `<tr>
+                    <td>${row.Metadata_JCP2022}</td>
+                    <td><img src="${imgSrc}" alt="Structure of ${row.Metadata_JCP2022}" width="100"></td>
+                    <td>${row.distance.toFixed(6)}</td>
+                </tr>`;
             });
+            table += "</table>";
+        
+            resultsDiv.innerHTML = table;
+            downloadBtn.style.display = "inline-block";
+        }
+
+
+        // Add functionality to download the results as CSV
+        downloadBtn.addEventListener("click", () => {
+            const csvRows = ["ID,InChI,Distance"];
+            currentResults.forEach((row) => {
+                csvRows.push(
+                    `${row.Metadata_JCP2022},"${row.Metadata_InChI}",${row.distance.toFixed(6)}`
+                );
+            });
+
+            const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.setAttribute("href", url);
+            a.setAttribute("download", "closest_molecules.csv");
+            a.click();
         });
     </script>
 </body>
