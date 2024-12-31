@@ -24,8 +24,17 @@
         th {
             background-color: #f2f2f2;
         }
+        td img {
+            display: block;
+            margin: auto;
+        }
         .error {
             color: red;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -44,12 +53,14 @@
         <label for="n">Number of Closest Molecules:</label>
         <input type="number" id="n" name="n" min="1" value="5" required>
         <br><br>
-        <button type="submit">Find Closest</button>
+        <div class="button-group">
+            <button type="submit">Find Closest</button>
+            <button id="download-btn" type="button" style="display:none;">Download Results as CSV</button>
+        </div>
     </form>
 
     <div id="dmso-distance" style="margin-top: 20px;"></div>
     <div id="results"></div>
-    <button id="download-btn" style="display:none;">Download Results as CSV</button>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {

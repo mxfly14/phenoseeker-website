@@ -40,8 +40,8 @@ def find_closest_molecules(query, n, query_by="id"):
     closest_indices = np.argsort(distances)[1 : n + 1]
 
     # Retrieve molecule IDs, InChIs, and distances
-    closest_molecules = metadata.iloc[closest_indices]
-    closest_molecules["distance"] = distances[closest_indices]
+    closest_molecules = metadata.iloc[closest_indices].copy()
+    closest_molecules.loc[:, "distance"] = distances[closest_indices]
 
     return closest_molecules[
         ["Metadata_JCP2022", "Metadata_InChI", "distance"]
@@ -58,6 +58,6 @@ def find_distance_to_dmso(query, query_type):
         query_idx = metadata.index[metadata["Metadata_JCP2022"] == query][0]
 
     # Find the index for DMSO (assuming "DMSO" is the ID for DMSO in the metadata)
-    dmso_idx = metadata.index[metadata["Metadata_InChI"] == "JCP2022_033924"][0]
+    dmso_idx = metadata.index[metadata["Metadata_JCP2022"] == "JCP2022_033924"][0]
 
     return float(distance_matrix[query_idx, dmso_idx])
