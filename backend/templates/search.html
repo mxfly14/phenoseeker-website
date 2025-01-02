@@ -39,7 +39,7 @@
     </style>
 </head>
 <body>
-    <h1>Phenoseeker</h1>
+    <h1>PhenoSeeker</h1>
     <form id="search-form">
         <label for="query_type">Search by:</label>
         <select id="query_type">
@@ -121,7 +121,7 @@
             }
         
             // Limit the displayed results to the top 10
-            const topResults = data.slice(0, 10);
+            const topResults = data.slice(0, 50);
         
             let table = "<table>";
             table += "<tr><th>ID</th><th>Structure</th><th>Distance</th></tr>";
