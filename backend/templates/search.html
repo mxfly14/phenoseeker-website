@@ -101,7 +101,7 @@
 
                     // Display results and DMSO distance
                     displayResults(data.results);
-                    dmsoDiv.innerHTML = `<h3>Distance to DMSO: ${data.dmso_distance.toFixed(6)}</h3>`;
+                    dmsoDiv.innerHTML = `<h3>Distance to DMSO: ${data.dmso_distance.toFixed(4)}</h3>`;
                 } else {
                     const errorText = await response.text();
                     resultsDiv.innerHTML = `<p class='error'>Error: ${errorText}</p>`;
