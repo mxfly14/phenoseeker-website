@@ -16,6 +16,7 @@ rdkit = "^2024.9.1"
 matplotlib = "^3.10.0"
 h5py = "^3.12.1"
 tqdm = "^4.67.1"
+psycopg2-binary = "^2.9.10"
 
 
 [tool.poetry.group.dev.dependencies]
