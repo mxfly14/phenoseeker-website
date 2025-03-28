@@ -16,10 +16,14 @@ rdkit = "^2024.9.1"
 matplotlib = "^3.10.0"
 h5py = "^3.12.1"
 tqdm = "^4.67.1"
+<<<<<<< HEAD
 seaborn = "^0.13.2"
 pubchempy = "^1.0.4"
 chembl-webresource-client = "^0.10.9"
 joblib = "^1.4.2"
+=======
+psycopg2-binary = "^2.9.10"
+>>>>>>> 81c78a6b03e49feb6e5c4e4f376f2a78e8ca4901
 
 
 [tool.poetry.group.dev.dependencies]
